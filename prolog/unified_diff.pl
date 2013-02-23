@@ -27,16 +27,33 @@ file_header(Old, New) -->
     "+++ ", s(New), "\n".
 
 hunks([hunk(Line, Heading, Deltas)|Hunks]) -->
-    hunk_header(Line, Heading),
+    { when(ground(Deltas), ranges(Deltas, OS, NS)) },
+    hunk_header(Line,OS, NS, Heading),
     %{ format('l=~d h=~s~n', [Line,Heading]) },
     deltas(Deltas),
     hunks(Hunks).
 hunks([]) --> "".
 
-hunk_header(Line, Heading) -->
-    "@@ -", integer(Line), swo(_, "@"), "@ ", s(Heading), "\n".
-hunk_header(Line, "") -->
-    "@@ -", integer(Line), swo(_, "@"), "@\n".
+hunk_header(Line,OS, NS, Heading) -->
+    "@@ -", i(Line), ",", i(OS), " +", i(Line), ",", i(NS), " @@",
+    (   " ", s(Heading)
+    ;   "", {Heading=""}
+    ),
+    "\n".
+
+% calculate range sizes based on a list of deltas
+ranges([],0,0).
+ranges([' '(_)|Deltas],OS, NS) :-
+    ranges(Deltas,OS0, NS0),
+    succ(OS0, OS),
+    succ(NS0, NS).
+ranges([+(_)|Deltas],OS, NS) :-
+    ranges(Deltas,OS, NS0),
+    succ(NS0, NS).
+ranges([-(_)|Deltas],OS, NS) :-
+    ranges(Deltas,OS0, NS),
+    succ(OS0, OS).
+
 
 deltas([Delta|Deltas]) -->
     delta(Delta),
@@ -53,3 +70,4 @@ delta(-(Content)) -->
 
 s(S) --> string(S).
 swo(S, Stop) --> string_without(Stop, S), Stop.
+i(I) --> integer(I), {I>0}.
