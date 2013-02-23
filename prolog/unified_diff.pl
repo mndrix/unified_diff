@@ -14,8 +14,10 @@ intro(Intro) -->
     s(Intro), "\n".
 
 files([file(Old,New,Hunks)|Files]) -->
-    file_header(Old, New),
-    %{ format('old=~s new=~s~n', [Old,New]) },
+    { when(ground(OldCodes);ground(Old), atom_codes(Old, OldCodes)) },
+    { when(ground(NewCodes);ground(New), atom_codes(New, NewCodes)) },
+    file_header(OldCodes, NewCodes),
+    %{ format('old=~s new=~s~n', [OldCodes,NewCodes]) },
     hunks(Hunks),
     files(Files).
 files([]) --> "".
