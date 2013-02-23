@@ -26,17 +26,17 @@ file_header(Old, New) -->
     "--- ", s(Old), "\n",
     "+++ ", s(New), "\n".
 
-hunks([hunk(Before, After, Heading, Deltas)|Hunks]) -->
-    hunk_header(Before, After, Heading),
-    %{ format('b=~s a=~s h=~s~n', [Before,After,Heading]) },
+hunks([hunk(Line, Heading, Deltas)|Hunks]) -->
+    hunk_header(Line, Heading),
+    %{ format('l=~d h=~s~n', [Line,Heading]) },
     deltas(Deltas),
     hunks(Hunks).
 hunks([]) --> "".
 
-hunk_header(Before, After, Heading) -->
-    "@@ -", s(Before), " +", s(After), " @@ ", s(Heading), "\n".
-hunk_header(Before, After, "") -->
-    "@@ -", s(Before), " +", s(After), " @@\n".
+hunk_header(Line, Heading) -->
+    "@@ -", integer(Line), swo(_, "@"), "@ ", s(Heading), "\n".
+hunk_header(Line, "") -->
+    "@@ -", integer(Line), swo(_, "@"), "@\n".
 
 deltas([Delta|Deltas]) -->
     delta(Delta),
