@@ -1,8 +1,9 @@
+:- module(unified_diff, [patch//2]).
 :- use_module(library(dcg/basics)).
 :- use_module(library(pure_input)).
 
 try(Files) :-
-    phrase_from_file(patch(_,Files), 'a.patch'),
+    phrase_from_file(patch(_,Files), '/tmp/a.patch'),
     !.
 
 patch(Intro, Files) -->
