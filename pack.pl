@@ -1,6 +1,6 @@
 name(unified_diff).
 version('0.0.1').
-title('').
+title('Parse and generate unified diffs').
 author('Michael Hendricks','michael@ndrix.org').
 packager('Michael Hendricks','michael@ndrix.org').
 maintainer('Michael Hendricks','michael@ndrix.org').
